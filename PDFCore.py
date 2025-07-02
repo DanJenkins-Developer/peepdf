@@ -6860,10 +6860,10 @@ class PDFParser :
         file = open(fileName,'rb')
         for line in file:
             if versionLine == '':
-                pdfHeaderIndex = line.find('%PDF-')
-                psHeaderIndex = line.find('%!PS-Adobe-')
+                pdfHeaderIndex = line.find(b'%PDF-')
+                psHeaderIndex = line.find(b'%!PS-Adobe-')
                 if pdfHeaderIndex != -1 or psHeaderIndex != -1:
-                    index = line.find('\r')
+                    index = line.find(b'\r')
                     if index != -1 and index+1 < len(line) and line[index+1] != '\n':
                         index += 1
                         versionLine = line[:index]
@@ -6885,9 +6885,9 @@ class PDFParser :
         file.close()
         
         # Getting the specification version
-        versionLine = versionLine.replace('\r','')
-        versionLine = versionLine.replace('\n','')
-        matchVersion = re.findall('%(PDF-|!PS-Adobe-\d{1,2}\.\d{1,2}\sPDF-)(\d{1,2}\.\d{1,2})',versionLine)
+        versionLine = versionLine.replace(b'\r',b'')
+        versionLine = versionLine.replace(b'\n',b'')
+        matchVersion = re.findall(b'%(PDF-|!PS-Adobe-\d{1,2}\.\d{1,2}\sPDF-)(\d{1,2}\.\d{1,2})',versionLine)
         if matchVersion == []:
             if forceMode:
                 pdfFile.setVersion(versionLine)
@@ -6927,7 +6927,7 @@ class PDFParser :
         pdfFile.setSHA256(hashlib.sha256(fileContent).hexdigest())
         
         # Getting the number of updates in the file
-        while fileContent.find('%%EOF') != -1:
+        while fileContent.find(b'%%EOF') != -1:
             self.readUntilSymbol(fileContent, '%%EOF')
             self.readUntilEndOfLine(fileContent)
             self.fileParts.append(fileContent[:self.charCounter])
