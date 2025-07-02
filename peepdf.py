@@ -70,7 +70,8 @@ def getRepPaths(url, path=''):
     try:
         browsingPage = urllib2.urlopen(url + path).read()
     except:
-        sys.exit('[x] Connection error while getting browsing page "' + url + path + '"')
+        sys.exit(
+            '[x] Connection error while getting browsing page "' + url + path + '"')
     browsingPageObject = json.loads(browsingPage)
     for file in browsingPageObject:
         if file['type'] == 'file':
@@ -83,14 +84,14 @@ def getRepPaths(url, path=''):
 
 def getLocalFilesInfo(filesList):
     localFilesInfo = {}
-    print '[-] Getting local files information...'
+    print('[-] Getting local files information...')
     for path in filesList:
         absFilePath = os.path.join(absPeepdfRoot, path)
         if os.path.exists(absFilePath):
             content = open(absFilePath, 'rb').read()
             shaHash = hashlib.sha256(content).hexdigest()
             localFilesInfo[path] = [shaHash, absFilePath]
-    print '[+] Done'
+    print('[+] Done')
     return localFilesInfo
 
 
@@ -113,18 +114,23 @@ def getPeepXML(statsDict, version, revision):
     detection = etree.SubElement(basicInfo, 'detection')
     if statsDict['Detection']:
         detectionRate = etree.SubElement(detection, 'rate')
-        detectionRate.text = '%d/%d' % (statsDict['Detection'][0], statsDict['Detection'][1])
+        detectionRate.text = '%d/%d' % (
+            statsDict['Detection'][0], statsDict['Detection'][1])
         detectionReport = etree.SubElement(detection, 'report_link')
         detectionReport.text = statsDict['Detection report']
     version = etree.SubElement(basicInfo, 'pdf_version')
     version.text = statsDict['Version']
-    binary = etree.SubElement(basicInfo, 'binary', status=statsDict['Binary'].lower())
-    linearized = etree.SubElement(basicInfo, 'linearized', status=statsDict['Linearized'].lower())
-    encrypted = etree.SubElement(basicInfo, 'encrypted', status=statsDict['Encrypted'].lower())
+    binary = etree.SubElement(
+        basicInfo, 'binary', status=statsDict['Binary'].lower())
+    linearized = etree.SubElement(
+        basicInfo, 'linearized', status=statsDict['Linearized'].lower())
+    encrypted = etree.SubElement(
+        basicInfo, 'encrypted', status=statsDict['Encrypted'].lower())
     if statsDict['Encryption Algorithms']:
         algorithms = etree.SubElement(encrypted, 'algorithms')
         for algorithmInfo in statsDict['Encryption Algorithms']:
-            algorithm = etree.SubElement(algorithms, 'algorithm', bits=str(algorithmInfo[1]))
+            algorithm = etree.SubElement(
+                algorithms, 'algorithm', bits=str(algorithmInfo[1]))
             algorithm.text = algorithmInfo[0]
     updates = etree.SubElement(basicInfo, 'updates')
     updates.text = statsDict['Updates']
@@ -134,7 +140,8 @@ def getPeepXML(statsDict, version, revision):
     streams.text = statsDict['Streams']
     comments = etree.SubElement(basicInfo, 'comments')
     comments.text = statsDict['Comments']
-    errors = etree.SubElement(basicInfo, 'errors', num=str(len(statsDict['Errors'])))
+    errors = etree.SubElement(
+        basicInfo, 'errors', num=str(len(statsDict['Errors'])))
     for error in statsDict['Errors']:
         errorMessageXML = etree.SubElement(errors, 'error_message')
         errorMessageXML.text = error
@@ -145,14 +152,16 @@ def getPeepXML(statsDict, version, revision):
             versionType = 'original'
         else:
             versionType = 'update'
-        versionInfo = etree.SubElement(advancedInfo, 'version', num=str(version), type=versionType)
+        versionInfo = etree.SubElement(
+            advancedInfo, 'version', num=str(version), type=versionType)
         catalog = etree.SubElement(versionInfo, 'catalog')
         if statsVersion['Catalog'] is not None:
             catalog.set('object_id', statsVersion['Catalog'])
         info = etree.SubElement(versionInfo, 'info')
         if statsVersion['Info'] is not None:
             info.set('object_id', statsVersion['Info'])
-        objects = etree.SubElement(versionInfo, 'objects', num=statsVersion['Objects'][0])
+        objects = etree.SubElement(
+            versionInfo, 'objects', num=statsVersion['Objects'][0])
         for id in statsVersion['Objects'][1]:
             object = etree.SubElement(objects, 'object', id=str(id))
             if statsVersion['Compressed Objects'] is not None:
@@ -165,7 +174,8 @@ def getPeepXML(statsDict, version, revision):
                     object.set('errors', 'true')
                 else:
                     object.set('errors', 'false')
-        streams = etree.SubElement(versionInfo, 'streams', num=statsVersion['Streams'][0])
+        streams = etree.SubElement(
+            versionInfo, 'streams', num=statsVersion['Streams'][0])
         for id in statsVersion['Streams'][1]:
             stream = etree.SubElement(streams, 'stream', id=str(id))
             if statsVersion['Xref Streams'] is not None:
@@ -203,17 +213,21 @@ def getPeepXML(statsDict, version, revision):
                 for event in events:
                     trigger = etree.SubElement(triggers, 'trigger', name=event)
                     for id in events[event]:
-                        etree.SubElement(trigger, 'container_object', id=str(id))
+                        etree.SubElement(
+                            trigger, 'container_object', id=str(id))
             if actions:
                 actionsList = etree.SubElement(suspicious, 'actions')
                 for action in actions:
-                    actionInfo = etree.SubElement(actionsList, 'action', name=action)
+                    actionInfo = etree.SubElement(
+                        actionsList, 'action', name=action)
                     for id in actions[action]:
-                        etree.SubElement(actionInfo, 'container_object', id=str(id))
+                        etree.SubElement(
+                            actionInfo, 'container_object', id=str(id))
             if elements:
                 elementsList = etree.SubElement(suspicious, 'elements')
                 for element in elements:
-                    elementInfo = etree.SubElement(elementsList, 'element', name=element)
+                    elementInfo = etree.SubElement(
+                        elementsList, 'element', name=element)
                     if vulnsDict.has_key(element):
                         vulnName = vulnsDict[element][0]
                         vulnCVEList = vulnsDict[element][1]
@@ -221,11 +235,13 @@ def getPeepXML(statsDict, version, revision):
                             cve = etree.SubElement(elementInfo, 'cve')
                             cve.text = vulnCVE
                     for id in elements[element]:
-                        etree.SubElement(elementInfo, 'container_object', id=str(id))
+                        etree.SubElement(
+                            elementInfo, 'container_object', id=str(id))
             if vulns:
                 vulnsList = etree.SubElement(suspicious, 'js_vulns')
                 for vuln in vulns:
-                    vulnInfo = etree.SubElement(vulnsList, 'vulnerable_function', name=vuln)
+                    vulnInfo = etree.SubElement(
+                        vulnsList, 'vulnerable_function', name=vuln)
                     if vulnsDict.has_key(vuln):
                         vulnName = vulnsDict[vuln][0]
                         vulnCVEList = vulnsDict[vuln][1]
@@ -233,7 +249,8 @@ def getPeepXML(statsDict, version, revision):
                             cve = etree.SubElement(vulnInfo, 'cve')
                             cve.text = vulnCVE
                     for id in vulns[vuln]:
-                        etree.SubElement(vulnInfo, 'container_object', id=str(id))
+                        etree.SubElement(
+                            vulnInfo, 'container_object', id=str(id))
         urls = statsVersion['URLs']
         suspiciousURLs = etree.SubElement(versionInfo, 'suspicious_urls')
         if urls != None:
@@ -258,7 +275,8 @@ def getPeepJSON(statsDict, version, revision):
     basicDict['size'] = int(statsDict['Size'])
     basicDict['detection'] = {}
     if statsDict['Detection'] != [] and statsDict['Detection'] is not None:
-        basicDict['detection']['rate'] = '%d/%d' % (statsDict['Detection'][0], statsDict['Detection'][1])
+        basicDict['detection']['rate'] = '%d/%d' % (
+            statsDict['Detection'][0], statsDict['Detection'][1])
         basicDict['detection']['report_link'] = statsDict['Detection report']
     basicDict['pdf_version'] = statsDict['Version']
     basicDict['binary'] = bool(statsDict['Binary'])
@@ -267,7 +285,8 @@ def getPeepJSON(statsDict, version, revision):
     basicDict['encryption_algorithms'] = []
     if statsDict['Encryption Algorithms']:
         for algorithmInfo in statsDict['Encryption Algorithms']:
-            basicDict['encryption_algorithms'].append({'bits': algorithmInfo[1], 'algorithm': algorithmInfo[0]})
+            basicDict['encryption_algorithms'].append(
+                {'bits': algorithmInfo[1], 'algorithm': algorithmInfo[0]})
     basicDict['updates'] = int(statsDict['Updates'])
     basicDict['num_objects'] = int(statsDict['Objects'])
     basicDict['num_streams'] = int(statsDict['Streams'])
@@ -348,10 +367,10 @@ def getPeepJSON(statsDict, version, revision):
         versionReport = {'version_info': versionInfo}
         advancedInfo.append(versionReport)
     jsonDict = {'peepdf_analysis':
-                    {'peepdf_info': peepdfDict,
-                     'date': datetime.today().strftime('%Y-%m-%d %H:%M'),
-                     'basic': basicDict,
-                     'advanced': advancedInfo}
+                {'peepdf_info': peepdfDict,
+                 'date': datetime.today().strftime('%Y-%m-%d %H:%M'),
+                 'basic': basicDict,
+                 'advanced': advancedInfo}
                 }
     return json.dumps(jsonDict, indent=4, sort_keys=True)
 
@@ -374,13 +393,14 @@ errorsFile = os.path.join(absPeepdfRoot, 'errors.txt')
 
 versionHeader = 'Version: peepdf ' + version + ' r' + revision
 peepdfHeader = versionHeader + newLine * 2 + \
-               url + newLine + \
-               peepTwitter + newLine + \
-               email + newLine * 2 + \
-               author + newLine + \
-               twitter + newLine
+    url + newLine + \
+    peepTwitter + newLine + \
+    email + newLine * 2 + \
+    author + newLine + \
+    twitter + newLine
 
-argsParser = optparse.OptionParser(usage='Usage: peepdf.py [options] PDF_file', description=versionHeader)
+argsParser = optparse.OptionParser(
+    usage='Usage: peepdf.py [options] PDF_file', description=versionHeader)
 argsParser.add_option('-i', '--interactive', action='store_true', dest='isInteractive', default=False,
                       help='Sets console mode.')
 argsParser.add_option('-s', '--load-script', action='store', type='string', dest='scriptFile',
@@ -422,7 +442,7 @@ try:
         staticColor = Fore.BLUE
         resetColor = Style.RESET_ALL
     if options.version:
-        print peepdfHeader
+        print(peepdfHeader)
     elif options.update:
         updated = False
         newVersion = ''
@@ -430,37 +450,39 @@ try:
         reVersion = 'version = \'(\d\.\d)\'\s*?revision = \'(\d+)\''
         repURL = 'https://api.github.com/repos/jesparza/peepdf/contents/'
         rawRepURL = 'https://raw.githubusercontent.com/jesparza/peepdf/master/'
-        print '[-] Checking if there are new updates...'
+        print('[-] Checking if there are new updates...')
         try:
             remotePeepContent = urllib2.urlopen(rawRepURL + 'peepdf.py').read()
         except:
-            sys.exit('[x] Connection error while trying to connect with the repository')
+            sys.exit(
+                '[x] Connection error while trying to connect with the repository')
         repVer = re.findall(reVersion, remotePeepContent)
         if repVer:
             newVersion = 'v' + repVer[0][0] + ' r' + repVer[0][1]
         else:
             sys.exit('[x] Error getting the version number from the repository')
         if localVersion == newVersion:
-            print '[+] No changes! ;)'
+            print('[+] No changes! ;)')
         else:
-            print '[+] There are new updates!!'
-            print '[-] Getting paths from the repository...'
+            print('[+] There are new updates!!')
+            print('[-] Getting paths from the repository...')
             pathNames = getRepPaths(repURL, '')
-            print '[+] Done'
+            print('[+] Done')
             localFilesInfo = getLocalFilesInfo(pathNames)
-            print '[-] Checking files...'
+            print('[-] Checking files...')
             for path in pathNames:
                 try:
                     fileContent = urllib2.urlopen(rawRepURL + path).read()
                 except:
-                    sys.exit('[x] Connection error while getting file "' + path + '"')
+                    sys.exit(
+                        '[x] Connection error while getting file "' + path + '"')
                 if path in localFilesInfo:
                     # File exists
                     # Checking hash
                     shaHash = hashlib.sha256(fileContent).hexdigest()
                     if shaHash != localFilesInfo[path][0]:
                         open(localFilesInfo[path][1], 'wb').write(fileContent)
-                        print '[+] File "' + path + '" updated successfully'
+                        print('[+] File "' + path + '" updated successfully')
                 else:
                     # File does not exist
                     index = path.rfind('/')
@@ -468,14 +490,16 @@ try:
                         dirsPath = path[:index]
                         absDirsPath = os.path.join(absPeepdfRoot, dirsPath)
                         if not os.path.exists(absDirsPath):
-                            print '[+] New directory "' + dirsPath + '" created successfully'
+                            print('[+] New directory "') + \
+                                dirsPath + '" created successfully'
                             os.makedirs(absDirsPath)
-                    open(os.path.join(absPeepdfRoot, path), 'wb').write(fileContent)
-                    print '[+] New file "' + path + '" created successfully'
+                    open(os.path.join(absPeepdfRoot, path),
+                         'wb').write(fileContent)
+                    print('[+] New file "' + path + '" created successfully')
             message = '[+] peepdf updated successfully'
             if newVersion != '':
                 message += ' to ' + newVersion
-            print message
+            print(message)
 
     else:
         if len(args) == 1:
@@ -487,11 +511,13 @@ try:
 
         if options.scriptFile is not None:
             if not os.path.exists(options.scriptFile):
-                sys.exit('Error: The script file "' + options.scriptFile + '" does not exist!!')
+                sys.exit('Error: The script file "' +
+                         options.scriptFile + '" does not exist!!')
 
         if fileName is not None:
             pdfParser = PDFParser()
-            ret, pdf = pdfParser.parse(fileName, options.isForceMode, options.isLooseMode, options.isManualAnalysis)
+            ret, pdf = pdfParser.parse(
+                fileName, options.isForceMode, options.isLooseMode, options.isManualAnalysis)
             if options.checkOnVT:
                 # Checks the MD5 on VirusTotal
                 md5Hash = pdf.getMD5()
@@ -503,9 +529,11 @@ try:
                     if vtJsonDict.has_key('response_code'):
                         if vtJsonDict['response_code'] == 1:
                             if vtJsonDict.has_key('positives') and vtJsonDict.has_key('total'):
-                                pdf.setDetectionRate([vtJsonDict['positives'], vtJsonDict['total']])
+                                pdf.setDetectionRate(
+                                    [vtJsonDict['positives'], vtJsonDict['total']])
                             else:
-                                pdf.addError('Missing elements in the response from VirusTotal!!')
+                                pdf.addError(
+                                    'Missing elements in the response from VirusTotal!!')
                             if vtJsonDict.has_key('permalink'):
                                 pdf.setDetectionReport(vtJsonDict['permalink'])
                         else:
@@ -542,7 +570,8 @@ try:
                 from PDFConsole import PDFConsole
 
                 scriptFileObject = open(options.scriptFile, 'rb')
-                console = PDFConsole(pdf, VT_KEY, options.avoidColors, stdin=scriptFileObject)
+                console = PDFConsole(
+                    pdf, VT_KEY, options.avoidColors, stdin=scriptFileObject)
                 try:
                     console.cmdloop()
                 except:
@@ -585,18 +614,24 @@ try:
                         stats += newLine
                     statsDict = pdf.getStats()
 
-                    stats += beforeStaticLabel + 'File: ' + resetColor + statsDict['File'] + newLine
-                    stats += beforeStaticLabel + 'MD5: ' + resetColor + statsDict['MD5'] + newLine
-                    stats += beforeStaticLabel + 'SHA1: ' + resetColor + statsDict['SHA1'] + newLine
-                    stats += beforeStaticLabel + 'SHA256: ' + resetColor + statsDict['SHA256'] + newLine
-                    stats += beforeStaticLabel + 'Size: ' + resetColor + statsDict['Size'] + ' bytes' + newLine
+                    stats += beforeStaticLabel + 'File: ' + \
+                        resetColor + statsDict['File'] + newLine
+                    stats += beforeStaticLabel + 'MD5: ' + \
+                        resetColor + statsDict['MD5'] + newLine
+                    stats += beforeStaticLabel + 'SHA1: ' + \
+                        resetColor + statsDict['SHA1'] + newLine
+                    stats += beforeStaticLabel + 'SHA256: ' + \
+                        resetColor + statsDict['SHA256'] + newLine
+                    stats += beforeStaticLabel + 'Size: ' + resetColor + \
+                        statsDict['Size'] + ' bytes' + newLine
                     if options.checkOnVT:
                         if statsDict['Detection'] != []:
                             detectionReportInfo = ''
                             if statsDict['Detection'] != None:
                                 detectionColor = ''
                                 if COLORIZED_OUTPUT and not options.avoidColors:
-                                    detectionLevel = statsDict['Detection'][0] / (statsDict['Detection'][1] / 3)
+                                    detectionLevel = statsDict['Detection'][0] / (
+                                        statsDict['Detection'][1] / 3)
                                     if detectionLevel == 0:
                                         detectionColor = alertColor
                                     elif detectionLevel == 1:
@@ -605,36 +640,51 @@ try:
                                     detectionColor, statsDict['Detection'][0], resetColor, statsDict['Detection'][1])
                                 if statsDict['Detection report'] != '':
                                     detectionReportInfo = beforeStaticLabel + 'Detection report: ' + resetColor + \
-                                                          statsDict['Detection report'] + newLine
+                                        statsDict['Detection report'] + newLine
                             else:
                                 detectionRate = 'File not found on VirusTotal'
-                            stats += beforeStaticLabel + 'Detection: ' + resetColor + detectionRate + newLine
+                            stats += beforeStaticLabel + 'Detection: ' + \
+                                resetColor + detectionRate + newLine
                             stats += detectionReportInfo
-                    stats += beforeStaticLabel + 'Version: ' + resetColor + statsDict['Version'] + newLine
-                    stats += beforeStaticLabel + 'Binary: ' + resetColor + statsDict['Binary'] + newLine
-                    stats += beforeStaticLabel + 'Linearized: ' + resetColor + statsDict['Linearized'] + newLine
-                    stats += beforeStaticLabel + 'Encrypted: ' + resetColor + statsDict['Encrypted']
+                    stats += beforeStaticLabel + 'Version: ' + \
+                        resetColor + statsDict['Version'] + newLine
+                    stats += beforeStaticLabel + 'Binary: ' + \
+                        resetColor + statsDict['Binary'] + newLine
+                    stats += beforeStaticLabel + 'Linearized: ' + \
+                        resetColor + statsDict['Linearized'] + newLine
+                    stats += beforeStaticLabel + 'Encrypted: ' + \
+                        resetColor + statsDict['Encrypted']
                     if statsDict['Encryption Algorithms'] != []:
                         stats += ' ('
                         for algorithmInfo in statsDict['Encryption Algorithms']:
-                            stats += algorithmInfo[0] + ' ' + str(algorithmInfo[1]) + ' bits, '
+                            stats += algorithmInfo[0] + ' ' + \
+                                str(algorithmInfo[1]) + ' bits, '
                         stats = stats[:-2] + ')'
                     stats += newLine
-                    stats += beforeStaticLabel + 'Updates: ' + resetColor + statsDict['Updates'] + newLine
-                    stats += beforeStaticLabel + 'Objects: ' + resetColor + statsDict['Objects'] + newLine
-                    stats += beforeStaticLabel + 'Streams: ' + resetColor + statsDict['Streams'] + newLine
-                    stats += beforeStaticLabel + 'URIs: ' + resetColor + statsDict['URIs'] + newLine
-                    stats += beforeStaticLabel + 'Comments: ' + resetColor + statsDict['Comments'] + newLine
-                    stats += beforeStaticLabel + 'Errors: ' + resetColor + str(len(statsDict['Errors'])) + newLine * 2
+                    stats += beforeStaticLabel + 'Updates: ' + \
+                        resetColor + statsDict['Updates'] + newLine
+                    stats += beforeStaticLabel + 'Objects: ' + \
+                        resetColor + statsDict['Objects'] + newLine
+                    stats += beforeStaticLabel + 'Streams: ' + \
+                        resetColor + statsDict['Streams'] + newLine
+                    stats += beforeStaticLabel + 'URIs: ' + \
+                        resetColor + statsDict['URIs'] + newLine
+                    stats += beforeStaticLabel + 'Comments: ' + \
+                        resetColor + statsDict['Comments'] + newLine
+                    stats += beforeStaticLabel + 'Errors: ' + resetColor + \
+                        str(len(statsDict['Errors'])) + newLine * 2
                     for version in range(len(statsDict['Versions'])):
                         statsVersion = statsDict['Versions'][version]
-                        stats += beforeStaticLabel + 'Version ' + resetColor + str(version) + ':' + newLine
+                        stats += beforeStaticLabel + 'Version ' + \
+                            resetColor + str(version) + ':' + newLine
                         if statsVersion['Catalog'] != None:
-                            stats += beforeStaticLabel + '\tCatalog: ' + resetColor + statsVersion['Catalog'] + newLine
+                            stats += beforeStaticLabel + '\tCatalog: ' + \
+                                resetColor + statsVersion['Catalog'] + newLine
                         else:
                             stats += beforeStaticLabel + '\tCatalog: ' + resetColor + 'No' + newLine
                         if statsVersion['Info'] != None:
-                            stats += beforeStaticLabel + '\tInfo: ' + resetColor + statsVersion['Info'] + newLine
+                            stats += beforeStaticLabel + '\tInfo: ' + \
+                                resetColor + statsVersion['Info'] + newLine
                         else:
                             stats += beforeStaticLabel + '\tInfo: ' + resetColor + 'No' + newLine
                         stats += beforeStaticLabel + '\tObjects (' + statsVersion['Objects'][
@@ -652,59 +702,68 @@ try:
                                 0] + '): ' + resetColor + str(statsVersion['Xref Streams'][1])
                         if statsVersion['Object Streams'] != None:
                             stats += newLine + beforeStaticLabel + '\t\tObject streams (' + \
-                                     statsVersion['Object Streams'][0] + '): ' + resetColor + str(
-                                statsVersion['Object Streams'][1])
+                                statsVersion['Object Streams'][0] + '): ' + resetColor + str(
+                                    statsVersion['Object Streams'][1])
                         if int(statsVersion['Streams'][0]) > 0:
                             stats += newLine + beforeStaticLabel + '\t\tEncoded (' + statsVersion['Encoded'][
                                 0] + '): ' + resetColor + str(statsVersion['Encoded'][1])
                             if statsVersion['Decoding Errors'] != None:
                                 stats += newLine + beforeStaticLabel + '\t\tDecoding errors (' + \
-                                         statsVersion['Decoding Errors'][0] + '): ' + resetColor + str(
-                                    statsVersion['Decoding Errors'][1])
+                                    statsVersion['Decoding Errors'][0] + '): ' + resetColor + str(
+                                        statsVersion['Decoding Errors'][1])
                         if statsVersion['URIs'] is not None:
                             stats += newLine + beforeStaticLabel + '\tObjects with URIs (' + \
-                                     statsVersion['URIs'][0] + '): ' + resetColor + str(statsVersion['URIs'][1])
+                                statsVersion['URIs'][0] + '): ' + \
+                                resetColor + str(statsVersion['URIs'][1])
                         if COLORIZED_OUTPUT and not options.avoidColors:
                             beforeStaticLabel = warningColor
                         if statsVersion['Objects with JS code'] != None:
                             stats += newLine + beforeStaticLabel + '\tObjects with JS code (' + \
-                                     statsVersion['Objects with JS code'][0] + '): ' + resetColor + str(
-                                statsVersion['Objects with JS code'][1])
+                                statsVersion['Objects with JS code'][0] + '): ' + resetColor + str(
+                                    statsVersion['Objects with JS code'][1])
                         actions = statsVersion['Actions']
                         events = statsVersion['Events']
                         vulns = statsVersion['Vulns']
                         elements = statsVersion['Elements']
                         if events != None or actions != None or vulns != None or elements != None:
-                            stats += newLine + beforeStaticLabel + '\tSuspicious elements:' + resetColor + newLine
+                            stats += newLine + beforeStaticLabel + \
+                                '\tSuspicious elements:' + resetColor + newLine
                             if events != None:
                                 for event in events:
                                     stats += '\t\t' + beforeStaticLabel + event + ' (%d): ' % len(events[event]) + \
-                                             resetColor + str(events[event]) + newLine
+                                             resetColor + \
+                                        str(events[event]) + newLine
                             if actions != None:
                                 for action in actions:
                                     stats += '\t\t' + beforeStaticLabel + action + ' (%d): ' % len(actions[action]) + \
-                                             resetColor + str(actions[action]) + newLine
+                                             resetColor + \
+                                        str(actions[action]) + newLine
                             if vulns != None:
                                 for vuln in vulns:
                                     if vulnsDict.has_key(vuln):
                                         vulnName = vulnsDict[vuln][0]
                                         vulnCVEList = vulnsDict[vuln][1]
-                                        stats += '\t\t' + beforeStaticLabel + vulnName + ' ('
+                                        stats += '\t\t' + \
+                                            beforeStaticLabel + vulnName + ' ('
                                         for vulnCVE in vulnCVEList:
                                             stats += vulnCVE + ','
-                                        stats = stats[:-1] + ') (%d): ' % len(vulns[vuln]) + resetColor + str(vulns[vuln]) + newLine
+                                        stats = stats[:-1] + ') (%d): ' % len(
+                                            vulns[vuln]) + resetColor + str(vulns[vuln]) + newLine
                                     else:
                                         stats += '\t\t' + beforeStaticLabel + vuln + ' (%d): ' % len(vulns[vuln]) + \
-                                                 resetColor + str(vulns[vuln]) + newLine
+                                                 resetColor + \
+                                            str(vulns[vuln]) + newLine
                             if elements != None:
                                 for element in elements:
                                     if vulnsDict.has_key(element):
                                         vulnName = vulnsDict[element][0]
                                         vulnCVEList = vulnsDict[element][1]
-                                        stats += '\t\t' + beforeStaticLabel + vulnName + ' ('
+                                        stats += '\t\t' + \
+                                            beforeStaticLabel + vulnName + ' ('
                                         for vulnCVE in vulnCVEList:
                                             stats += vulnCVE + ','
-                                        stats = stats[:-1] + '): ' + resetColor + str(elements[element]) + newLine
+                                        stats = stats[:-1] + '): ' + resetColor + \
+                                            str(elements[element]) + newLine
                                     else:
                                         stats += '\t\t' + beforeStaticLabel + element + ': ' + resetColor + str(
                                             elements[element]) + newLine
@@ -717,7 +776,7 @@ try:
                                 stats += '\t\t' + url + newLine
                         stats += newLine * 2
                 if fileName != None:
-                    print stats
+                    print(stats)
                 if options.isInteractive:
                     from PDFConsole import PDFConsole
 
@@ -729,7 +788,8 @@ try:
                             sys.exit()
                         except:
                             errorMessage = '*** Error: Exception not handled using the interactive console!! Please, report it to the author!!'
-                            print errorColor + errorMessage + resetColor + newLine
+                            print(errorColor + errorMessage +
+                                  resetColor + newLine)
                             traceback.print_exc(file=open(errorsFile, 'a'))
 except Exception as e:
     if len(e.args) == 2:
@@ -739,7 +799,7 @@ except Exception as e:
     if excName == None or excName != 'PeepException':
         errorMessage = '*** Error: Exception not handled!!'
         traceback.print_exc(file=open(errorsFile, 'a'))
-    print errorColor + errorMessage + resetColor + newLine
+    print(errorColor + errorMessage + resetColor + newLine)
 finally:
     if os.path.exists(errorsFile):
         message = newLine + 'Please, don\'t forget to report the errors found:' + newLine * 2
