@@ -7,3 +7,15 @@ Pending tasks:
 - Improve the automatic Javascript analysis, getting code from other parts of the documents (getAnnots, etc)
 - GUI
 - ...
+
+
+From chat:
+✅ Alternative Suggestion (Recommended)
+
+If you’re trying to use peepdf, and it’s requiring PyV8 for JavaScript analysis, consider:
+
+    Skipping JavaScript emulation if it's not critical.
+
+    Using jsbeautifier or js2py instead for parsing/analysis.
+
+    Trying to install older, prebuilt versions of PyV8, though these rarely work on Windows without patching.
