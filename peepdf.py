@@ -31,7 +31,8 @@ import sys
 import os
 import optparse
 import re
-import urllib2
+# import urllib2
+import urllib3
 import hashlib
 import traceback
 import json
