@@ -19,3 +19,6 @@ If you’re trying to use peepdf, and it’s requiring PyV8 for JavaScript analy
     Using jsbeautifier or js2py instead for parsing/analysis.
 
     Trying to install older, prebuilt versions of PyV8, though these rarely work on Windows without patching.
+
+    Another todo
+    
